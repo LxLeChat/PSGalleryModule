@@ -97,11 +97,12 @@ function Get-PSGModuleInfo {
 
     }
     
-    End {`
-        
+    End {
+
         If ( $LatestVersion ) {
             $Q = $Q + ')'
         }
+        
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Search()?$fQ"
 
