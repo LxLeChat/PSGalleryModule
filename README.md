@@ -43,8 +43,11 @@ DllCount    : 230
 
 ## You can pass module names from the pipeline.
 'AdsiPS','PSClassutils' | Get-PSGModuleInfo -LatestVersion
+or
+Get-Module | Get-PSGModuleInfo -LatestVersion
 
 # More infos
-https://github.com/NuGet/Home/wiki/Filter-OData-query-requests
-https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-odata/72d4ebf9-5480-49a4-b88b-c5782f726c87
+-https://github.com/NuGet/Home/wiki/Filter-OData-query-requests
+
+-https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-odata/72d4ebf9-5480-49a4-b88b-c5782f726c87
 
