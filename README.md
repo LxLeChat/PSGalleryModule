@@ -41,7 +41,7 @@ Description : Contains a set of utilities to work with Powershell Classes.
 DllCount    : 230
 ```
 
-## Example: It accepts the pipeline.
+## You can pass module names from the pipeline.
 'AdsiPS','PSClassutils' | Get-PSGModuleInfo -LatestVersion
 
 # More infos
