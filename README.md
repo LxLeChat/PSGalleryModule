@@ -43,6 +43,7 @@ DllCount    : 230
 
 ## You can pass module names from the pipeline.
 'AdsiPS','PSClassutils' | Get-PSGModuleInfo -LatestVersion
+or
 Get-Module | Get-PSGModuleInfo -LatestVersion
 
 # More infos
