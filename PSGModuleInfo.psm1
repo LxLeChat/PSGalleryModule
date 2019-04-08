@@ -50,8 +50,7 @@ function Get-PSGModuleInfo {
         [Alias("Name")]
         [String[]]$Module,
         [Switch]$LatestVersion,
-        [Switch]$DownLoadCount,
-        [Switch]$PassThru
+        [Switch]$DownLoadCount
     )
     
     Begin {
@@ -98,16 +97,15 @@ function Get-PSGModuleInfo {
 
     }
     
-    End {
+    End {`
+        
         If ( $LatestVersion ) {
             $Q = $Q + ')'
         }
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Search()?$fQ"
-        
-        If ($PassThru) {
-            [System.UriBuilder]::new($Uri)
-        }
+
+        Write-Verbose $Uri
 
         If ( $DownLoadCount ) {
             $ApiCall=Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
@@ -121,6 +119,5 @@ function Get-PSGModuleInfo {
             Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
         }
         
-
     }
 }
