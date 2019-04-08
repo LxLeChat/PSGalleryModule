@@ -13,6 +13,16 @@ It will retrieve all module where the module id starts with PSC
 Retrieve all modules named psclassutils. In this example, it will return all the published versions of this particular module.
 Get-PSGModuleInfo -Module 'psclassutils'
 
+Retrieve latestversion of psclassutils modules, and directly displays downloadcount and versiondownloadcount
+Get-PSGModuleInfo -Module Psclassutils -Downloadcount
+Check last 2 properties:
+```
+Title                    : Title
+Version                  : 2.6.3
+DownLoadCount            : 234
+VersionDownLoadCount     : 81
+```
+
 Retrieve the infos for the latest published version of the psclassutils module, and display only the id,version,authors,description and total downloadcount
 Get-PSGModuleInfo -Module 'psclassutils' -LatestVersion | select id,version,authors,description,@{l='DllCount';e={$_.downloadcount.'#text'}}
 
