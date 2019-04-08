@@ -49,7 +49,8 @@ function Get-PSGModuleInfo {
         [Parameter(Mandatory=$True,ValueFromPipelineByPropertyName=$True,ValueFromPipeline=$True)]
         [Alias("Name")]
         [String[]]$Module,
-        [Switch]$LatestVersion
+        [Switch]$LatestVersion,
+        [Switch]$DownLoadCount
     )
     
     Begin {
@@ -102,7 +103,20 @@ function Get-PSGModuleInfo {
         }
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Search()?$fQ"
-        Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+        #write-host $uri
+
+        If ( $DownLoadCount ) {
+            $ApiCall=Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+            [System.Collections.ArrayList]$Properties = ($ApiCall | Get-Member -MemberType Property).Name
+            $Properties.Remove('VersionDownloadCount')
+            $Properties.Remove($b.Remove('DownloadCount'))
+            $null = $Properties.Add(@{l='DownLoadCount';e={$_.DownLoadCount.'#Text'}})
+            $null = $Properties.Add(@{l='VersionDownLoadCount';e={$_.VersionDownLoadCount.'#Text'}})
+            $ApiCall | select-object -Property $Properties -ExcludeProperty DownloadCount,VersionDownloadCount
+        } Else {
+            Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+        }
+        
 
     }
 }
