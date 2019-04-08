@@ -36,7 +36,8 @@ Description : Contains a set of utilities to work with Powershell Classes.
 DllCount    : 230
 ```
 
+## Example: It accepts the pipeline.
 'AdsiPS','PSClassutils' | Get-PSGModuleInfo -LatestVersion
 
-## More infos
+# More infos
 https://github.com/NuGet/Home/wiki/Filter-OData-query-requests
