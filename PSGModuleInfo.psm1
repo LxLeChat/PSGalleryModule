@@ -63,6 +63,7 @@ function Get-PSGModuleInfo {
     
     Process {
 
+        ## Build Query
         Foreach ( $M in $Module ) {
             
             If ( $i -gt 0 ) {
@@ -95,16 +96,12 @@ function Get-PSGModuleInfo {
             $i++
         }
 
-    }
-    
-    End {
-
         If ( $LatestVersion ) {
             $Q = $Q + ')'
         }
-        
+
         $fQ = $bQ + $Q
-        $Uri = "https://www.powershellgallery.com/api/v2/Search()?$fQ"
+        $Uri = "https://www.powershellgallery.com/api/v2/Search()?$fQ&`$orderby=Id"
 
         Write-Verbose $Uri
 
@@ -115,10 +112,54 @@ function Get-PSGModuleInfo {
             $Properties.Remove($b.Remove('DownloadCount'))
             $null = $Properties.Add(@{l='DownLoadCount';e={$_.DownLoadCount.'#Text'}})
             $null = $Properties.Add(@{l='VersionDownLoadCount';e={$_.VersionDownLoadCount.'#Text'}})
-            $ApiCall | select-object -Property $Properties -ExcludeProperty DownloadCount,VersionDownloadCount
+            
+            ## Results might be paginated, we need yo generate the next url
+            If ( $ApiCall.count -eq 100 ) {
+                $skip = 100
+                While ( $ApiCall.count -eq 100 ) {
+                    If ( $skip -eq 100 ) {
+                        $Uri = $uri + "&`$skip=$skip"
+                    } Else {
+                        $Uri = $uri -replace '\$skip=\d+$',"`$skip=$skip"
+                    }
+                    write-verbose "Next Url: $uri"
+                    $ApiCall=Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+                    [System.Collections.ArrayList]$Properties = ($ApiCall | Get-Member -MemberType Property).Name
+                    $Properties.Remove('VersionDownloadCount')
+                    $Properties.Remove($b.Remove('DownloadCount'))
+                    $null = $Properties.Add(@{l='DownLoadCount';e={$_.DownLoadCount.'#Text'}})
+                    $null = $Properties.Add(@{l='VersionDownLoadCount';e={$_.VersionDownLoadCount.'#Text'}})
+                    $ApiCall | select-object -Property $Properties -ExcludeProperty DownloadCount,VersionDownloadCount
+                    $skip = $skip + 100
+                }
+            } Else {
+                $ApiCall | select-object -Property $Properties -ExcludeProperty DownloadCount,VersionDownloadCount
+            }
         } Else {
-            Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+            $ApiCall = Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+
+            ## Results might be paginated, we need yo generate the next url
+            if ( $ApiCall.count -eq 100 ) {
+                $ApiCall
+                $skip = 100
+                While ( $ApiCall.count -eq 100 ) {
+                    If ( $skip -eq 100 ) {
+                        $Uri = $uri + "&`$skip=$skip"
+                    } Else {
+                        $Uri = $uri -replace '\$skip=\d+$',"`$skip=$skip"
+                    }
+                    
+                    write-verbose "Next Url: $uri"
+                    $ApiCall = Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+                    $ApiCall
+                    $skip = $skip + 100
+                }
+            } Else {
+                $ApiCall
+            }
         }
-        
+
     }
+    
+    End { }
 }
