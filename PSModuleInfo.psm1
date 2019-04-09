@@ -96,6 +96,10 @@ function Get-PSModuleInfo {
             $i++
         }
 
+    }
+    
+    End {
+
         If ( $LatestVersion ) {
             $Q = $Q + ')'
         }
@@ -158,8 +162,5 @@ function Get-PSModuleInfo {
                 $ApiCall
             }
         }
-
     }
-    
-    End { }
 }
