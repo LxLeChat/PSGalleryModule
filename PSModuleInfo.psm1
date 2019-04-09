@@ -1,11 +1,11 @@
-function Get-PSGModuleInfo {
+function Get-PSModuleInfo {
     <#
     .SYNOPSIS
         Simple Function to retrieve Module(s) info(s) from the PSGallery
     .DESCRIPTION
        Simple Function to retrieve Module(s) info(s) from the PSGallery
     .EXAMPLE
-        PS C:\> Get-PSGModuleInfo -Module PSClassutils
+        PS C:\> Get-PSModuleInfo -Module PSClassutils
         Will retrieve infos, about all the modules named psclassutils.
 
         Id                       : PSClassUtils

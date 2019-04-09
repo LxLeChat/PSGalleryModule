@@ -1,4 +1,4 @@
-# PSGModuleInfo
+# PSModuleInfo
 Simple Function to retrieve Module(s) info(s) from the PSGallery
 
 # How it works
@@ -7,21 +7,21 @@ The function builds an odata query for the psgallery api.
 # Wildcard
 You can use the asterisk wildard if you dont know the exact name of the module
 ```
-Get-PSGModuleInfo -Module 'PSC*'
+Get-PSModuleInfo -Module 'PSC*'
 ```
 It will retrieve all modules where the module id starts with PSC
 
 ## Example
 Retrieve all modules named psclassutils. In this example, it will return all the published versions of this particular module.
 ```
-Get-PSGModuleInfo -Module 'psclassutils'
+Get-PSModuleInfo -Module psclassutils
 ```
 
 Retrieve latestversion of psclassutils modules, and directly displays downloadcount and versiondownloadcount
 Check last 2 properties:
 
 ```
-Get-PSGModuleInfo -Module Psclassutils -Downloadcount
+Get-PSModuleInfo -Module Psclassutils -Downloadcount
 
 ...
 Title                    : Title
@@ -30,42 +30,30 @@ DownLoadCount            : 234
 VersionDownLoadCount     : 81
 ```
 
-Retrieve the infos for the latest published version of the psclassutils module, and display only the id,version,authors,description and total downloadcount
+Retrieve the infos for the latest published version of the psclassutils and adsips modules, and display only the id,version,authors,description and total versiondownloadcount
 ```
-Get-PSGModuleInfo -Module 'psclassutils' -LatestVersion | select id,version,authors,description,@{l='DllCount';e={$_.downloadcount.'#text'}}
+Get-PSModuleInfo -Module 'psclassutils','adsips' -LatestVersion  -Downloadcount | select id,version,authors,description,versiondownloadcount
 
-....
-Id          : PSClassUtils
-Version     : 2.6.3
-Authors     : Stéphane van Gulick
-Description : Contains a set of utilities to work with Powershell Classes.
-DllCount    : 230
-```
+Id                   : AdsiPS
+Version              : 1.0.0.3
+Authors              : Francois-Xavier Cat
+Description          : PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
+VersionDownLoadCount : 873
 
-Retrieve the infos for the latest published version of the psclassutils and adsips modules, and display only the id,version,authors,description and total downloadcount
-```
-Get-PSGModuleInfo -Module 'psclassutils','adsips' -LatestVersion | select id,version,authors,description,downloadcount
-
-Id          : AdsiPS
-Version     : 1.0.0.3
-Authors     : Francois-Xavier Cat
-Description : PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
-DllCount    : 1374
-
-Id          : PSClassUtils
-Version     : 2.6.3
-Authors     : Stéphane van Gulick
-Description : Contains a set of utilities to work with Powershell Classes.
-DllCount    : 230
+Id                   : PSClassUtils
+Version              : 2.6.3
+Authors              : Stéphane van Gulick
+Description          : Contains a set of utilities to work with Powershell Classes.
+VersionDownLoadCount : 85
 ```
 
 ## You can pass module names from the pipeline.
 ```
-'AdsiPS','PSClassutils' | Get-PSGModuleInfo -LatestVersion
+'AdsiPS','PSClassutils' | Get-PSModuleInfo -LatestVersion
 ```
 or
 ```
-Get-Module | Get-PSGModuleInfo -LatestVersion
+Get-Module | Get-PSModuleInfo -LatestVersion
 ```
 
 # More infos
