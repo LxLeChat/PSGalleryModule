@@ -109,7 +109,7 @@ function Get-PSGModuleInfo {
             $ApiCall=Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
             [System.Collections.ArrayList]$Properties = ($ApiCall | Get-Member -MemberType Property).Name
             $Properties.Remove('VersionDownloadCount')
-            $Properties.Remove($b.Remove('DownloadCount'))
+            $Properties.Remove('DownloadCount')
             $null = $Properties.Add(@{l='DownLoadCount';e={$_.DownLoadCount.'#Text'}})
             $null = $Properties.Add(@{l='VersionDownLoadCount';e={$_.VersionDownLoadCount.'#Text'}})
             
@@ -126,7 +126,7 @@ function Get-PSGModuleInfo {
                     $ApiCall=Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
                     [System.Collections.ArrayList]$Properties = ($ApiCall | Get-Member -MemberType Property).Name
                     $Properties.Remove('VersionDownloadCount')
-                    $Properties.Remove($b.Remove('DownloadCount'))
+                    $Properties.Remove('DownloadCount')
                     $null = $Properties.Add(@{l='DownLoadCount';e={$_.DownLoadCount.'#Text'}})
                     $null = $Properties.Add(@{l='VersionDownLoadCount';e={$_.VersionDownLoadCount.'#Text'}})
                     $ApiCall | select-object -Property $Properties -ExcludeProperty DownloadCount,VersionDownloadCount
