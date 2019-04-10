@@ -11,6 +11,10 @@ Get-PSModuleInfo -Module 'PSC*'
 ```
 It will retrieve all modules where the module id starts with PSC
 
+# Downloadcount switch
+The switch expand downloadcount and versiondownloadcount properties for each entities.
+Downloadcount will return the same value for every version of each entities. Instead VersionDownloadCount is more accurate, since its downloadcount per version.
+
 ## Example
 Retrieve all modules named psclassutils. In this example, it will return all the published versions of this particular module.
 ```
