@@ -5,20 +5,20 @@ function Get-PSModuleInfo {
     .DESCRIPTION
        Simple Function to retrieve Module(s) info(s) from the PSGallery
     .EXAMPLE
-        PS C:\> Get-PSModuleInfo -Module PSClassutils
+        PS C:\> Get-PSModuleInfo -Module PSClassutils -latestversion -Downloadcount
         Will retrieve infos, about all the modules named psclassutils.
 
         Id                       : PSClassUtils
-        Version                  : 0.10.0
-        NormalizedVersion        : 0.10.0
+        Version                  : 2.6.3
+        NormalizedVersion        : 2.6.3
         Authors                  : Stéphane van Gulick
         Copyright                : (c) 2018 TAAVAST3. All rights reserved.
         Created                  : Created
         Dependencies             :
-        Description              : Contains a set of utilities to work with Powershell Classes.
-        DownloadCount            : DownloadCount
+        Description              : Contains a set of utilities to work with Powershell Classes
         ...
-        VersionDownloadCount     : VersionDownloadCount
+        DownloadCount            : 240
+        VersionDownloadCount     : 1381
     .INPUTS
         Module(s) Names, or partial Module name
         You can use the wildcard if you dont know the exact name of the module
@@ -27,7 +27,7 @@ function Get-PSModuleInfo {
     .NOTES
         Go checke: https://github.com/LxLeChat/PSModuleInfo
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName="AllParameterSets")]
     Param (
         [Parameter(Mandatory=$True,ValueFromPipelineByPropertyName=$True,ValueFromPipeline=$True)]
         [Alias("Name")]
@@ -46,35 +46,27 @@ function Get-PSModuleInfo {
     
     Process {
 
-        ## Build Query
+        ## Build Query, api calls are made in the end block
         Foreach ( $M in $Module ) {
             
+
             If ( $i -gt 0 ) {
-                If ( $LatestVersion) {
-                    $Q = $Q + ') or '
-                } Else {
-                    $Q = $Q + ' or '
-                }
-                
+                $Q = $Q + ' or '
             }
 
-            If ( $M -match '\*$') {
-
-                If ( $LatestVersion ) {
-                    $Q = $Q + "( startswith(Id,'$($M.trimend('*'))') and IsLatestVersion "
-                } Else {
-                    $Q = $Q + "startswith(Id,'$($M.trimend('*'))')"
-                }
-
-            } Else {
-                
-                If ( $LatestVersion ) {
-                    $Q = $Q + "( Id eq '$M' and IsLatestVersion"
-                } Else {
-                    $Q = $Q + "Id eq '$M'"
-                }
+            switch -Regex ($M) {
+            "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') gt 0";break}
+            "^\*.+"     {$tQ = "endswith(Id,'$($M.trimstart('*'))')";break}
+            ".+\*$"     {$tQ = "startswith(Id,'$($M.trimend('*'))')";break}
+            "^\*$"      {$tQ = "startswith(Id,'')";break}
+            default     {$tQ = "Id eq '$M'"}
             }
 
+            If ( $LatestVersion ) {
+                $tQ = '(' + $tQ + ' and IsLatestVersion)'
+            }
+
+            $Q = $Q + $tQ
             $i++
         }
 
@@ -82,13 +74,9 @@ function Get-PSModuleInfo {
     
     End {
 
-        ## Finish query
-        If ( $LatestVersion ) {
-            $Q = $Q + ')'
-        }
-
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Packages()?$fQ&`$orderby=Id"
+        write-verbose $uri
 
         If ( $DownLoadCount ) {
 
@@ -152,5 +140,6 @@ function Get-PSModuleInfo {
                 }
             }
         }
+        
     }
 }
