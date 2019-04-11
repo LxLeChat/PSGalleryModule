@@ -1,8 +1,8 @@
 # PSModuleInfo
-Simple Function to retrieve Module(s) info(s) from the PSGallery. The point was to retrieve download count informations.
+Simple Function to retrieve Module(s) info(s) from the PSGallery. The point was to retrieve download count informations for modules.
 
 # How it works
-The function builds an odata query for the psgallery api.
+The function builds an odata query for the psgallery api. If you want to display the uri that is called, use ```-verbose```.
 
 # Wildcards
 You can use the ```*``` wildard if you dont know the exact name of the module
