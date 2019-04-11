@@ -11,6 +11,7 @@ Class GalleryInfo {
     $Dependecies
     $Description
     $GalleryDetailsUrl
+    $FileList
 
     GalleryInfo ($Input) {
         $this.Title = $input.Title.'#Text'
@@ -23,5 +24,6 @@ Class GalleryInfo {
         $this.Created = get-date $input.properties.Created.'#Text'
         $this.Description = $input.properties.Description
         $this.GalleryDetailsUrl = $input.properties.GalleryDetailsUrl
+        $this.FileList = $input.properties.FileList.Split('|')
     }
 }

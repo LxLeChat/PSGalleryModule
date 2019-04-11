@@ -1,5 +1,37 @@
-Class PSModuleInfo {
-    PSModuleInfo (){}
+Class GalleryInfo {
+    $Title
+    $Id
+    $Version
+    $Type
+    $VersionDownloadCount
+    $ModuleDownloadCount
+    $PackageSize
+    $NormalizedVersion
+    $Authors
+    $Copyright
+    $Created
+    $Dependecies
+    $Description
+    $Tags
+    $GalleryDetailsUrl
+    $FileList
+
+    GalleryInfo ($Input) {
+        $this.Title = $input.Title.'#Text'
+        $this.Id = $input.Properties.id
+        $this.Version = $input.Properties.Version
+        $this.Type = $input.properties.ItemType
+        $this.VersionDownloadCount = $input.Properties.VersionDownloadCount.'#Text'
+        $this.ModuleDownloadCount = $input.Properties.DownloadCount.'#Text'
+        $this.PackageSize = $input.properties.PackageSize.'#Text'
+        $this.Authors = $input.Properties.Authors
+        $this.Copyright = $input.Properties.Copyright
+        $this.Created = get-date $input.properties.Created.'#Text'
+        $this.Description = $input.properties.Description
+        $this.Tags = $input.properties.tags.split(' ')
+        $this.GalleryDetailsUrl = $input.properties.GalleryDetailsUrl
+        $this.FileList = $input.properties.FileList.Split('|')
+    }
 }
 function Get-PSModuleInfo {
     <#
