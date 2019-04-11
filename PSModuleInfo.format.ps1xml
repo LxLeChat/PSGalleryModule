@@ -2,7 +2,7 @@
 <Configuration>
 <ViewDefinitions>
   <View>
-    <Name>DefaultView</Name>
+    <Name>CustomView</Name>
     <ViewSelectedBy>
       <TypeName>System.Xml.XmlElement</TypeName>
     </ViewSelectedBy>

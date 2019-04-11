@@ -1,3 +1,6 @@
+Class PSModuleInfo {
+    PSModuleInfo (){}
+}
 function Get-PSModuleInfo {
     <#
     .SYNOPSIS
@@ -115,10 +118,12 @@ function Get-PSModuleInfo {
         } Else {
 
             ## API Call
-            $ApiCall = Invoke-RestMethod -Method GET -Uri $Uri | Select-Object -ExpandProperty properties
+            $ApiCall = Invoke-RestMethod -Method GET -Uri $Uri
 
             ## Return raw object
-            $ApiCall
+            $ApiCall.foreach({
+                [GalleryInfo]::new($_)
+            })
 
             ## Results might be paginated, we need yo generate the next url
             if ( $ApiCall.count -eq 100 ) {
