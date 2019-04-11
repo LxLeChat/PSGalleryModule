@@ -55,7 +55,7 @@ function Get-PSModuleInfo {
             }
 
             switch -Regex ($M) {
-            "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') gt 0";break}
+            "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') ge 0";break}
             "^\*.+"     {$tQ = "endswith(Id,'$($M.trimstart('*'))')";break}
             ".+\*$"     {$tQ = "startswith(Id,'$($M.trimend('*'))')";break}
             "^\*$"      {$tQ = "startswith(Id,'')";break}
