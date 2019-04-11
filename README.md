@@ -1,5 +1,5 @@
 # PSModuleInfo
-Simple Function to retrieve Module(s) info(s) from the PSGallery
+Simple Function to retrieve Module(s) info(s) from the PSGallery. The point was to retrieve download count informations.
 
 # How it works
 The function builds an odata query for the psgallery api.
