@@ -4,12 +4,15 @@ Simple Function to retrieve Module(s) info(s) from the PSGallery
 # How it works
 The function builds an odata query for the psgallery api.
 
-# Wildcard
-You can use the asterisk wildard if you dont know the exact name of the module
+# Wildcards
+You can use the ```*``` wildard if you dont know the exact name of the module
 ```
-Get-PSModuleInfo -Module 'PSC*'
+Get-PSModuleInfo -Module class*
+Get-PSModuleInfo -Module *class
+Get-PSModuleInfo -Module *class*
+Get-PSModuleInfo -Module *
 ```
-It will retrieve all modules where the module id starts with PSC
+
 
 # Downloadcount switch
 The switch expand downloadcount and versiondownloadcount properties for each entities.
