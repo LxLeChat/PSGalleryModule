@@ -1,5 +1,5 @@
 # PSModuleInfo
-Simple Function to retrieve Module(s) info(s) from the PSGallery. The point was to retrieve download count informations for modules.
+Simple Function to retrieve Module(s) info(s) from the PSGallery. The point was to retrieve download count informations for modules, and  have some fun with the powershellgallery xD.
 
 # How it works
 The function builds an odata query for the psgallery api. If you want to display the uri that is called, use ```-verbose```.
