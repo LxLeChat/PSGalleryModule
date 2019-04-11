@@ -17,8 +17,19 @@
               <PropertyName>Version</PropertyName>
             </ListItem>
             <ListItem>
+              <PropertyName>Owners</PropertyName>
+            </ListItem>
+            <ListItem>
               <Label>VersionDownloadCount</Label>
               <ScriptBlock>$_.VersionDownloadCount.'#Text'</ScriptBlock>
+            </ListItem>
+            <ListItem>
+              <Label>DownloadCount</Label>
+              <ScriptBlock>$_.DownloadCount.'#Text'</ScriptBlock>
+            </ListItem>
+            <ListItem>
+              <Label>ProjectUrl</Label>
+              <ScriptBlock>If ($_.ProjectUrl -is [System.String]){$_.ProjectUrl}else{$null}</ScriptBlock>
             </ListItem>
           </ListItems>
         </ListEntry>
