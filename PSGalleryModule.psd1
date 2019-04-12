@@ -22,7 +22,7 @@
     #Copyright = ''
     
     # Description of the functionality provided by this module
-    Description = 'Retrieve module(s) infos from the psgallery. Uses the psgallery api.'
+    Description = 'Retrieve module(s) infos from the psgallery using the psgallery api.'
     
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
