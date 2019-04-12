@@ -165,6 +165,7 @@ function Find-GalleryModule {
         $Uri = "https://www.powershellgallery.com/api/v2/Packages()?$fQ&`$orderby=Id"
         $skip = 0
         $BaseUri = $uri
+        $y = 100
 
         While ( $y -eq 100 ) {
 
