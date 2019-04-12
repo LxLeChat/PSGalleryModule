@@ -1,5 +1,6 @@
-# PSModuleInfo
-Simple Function to retrieve Module(s) info(s) from the PSGallery.
+# PSMGalleryModule
+Simple Function to retrieve Module(s) info(s) from the PSGallery. Its an attempt to search the psgallery with it's API.
+The idea at the begining was to be able to retrieve module download infos.
 
 # How it works
 The function builds an odata query for the psgallery api. It uses a basic class to expand all properties.
