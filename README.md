@@ -5,6 +5,9 @@ The idea at the begining was to be able to retrieve module download infos.
 # How it works
 The function builds an odata query for the psgallery api. It uses a basic class to expand all properties.
 
+# Install
+Fork the projet and clone it, or install from the psgallery directly : ```Install-Module PSGalleryModule``` 
+
 # Wildcards
 You can use the ```*``` wildard if you dont know the exact name of the module.
 ```
