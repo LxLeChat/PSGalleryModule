@@ -1,34 +1,29 @@
 # PSModuleInfo
-Simple Function to retrieve Module(s) info(s) from the PSGallery. The point was to retrieve download count informations for modules, and  have some fun with the powershellgallery xD.
+Simple Function to retrieve Module(s) info(s) from the PSGallery.
 
 # How it works
-The function builds an odata query for the psgallery api. If you want to display the uri that is called, use ```-verbose```.
+The function builds an odata query for the psgallery api. It uses a basic class to expand all properties.
 
 # Wildcards
-You can use the ```*``` wildard if you dont know the exact name of the module
+You can use the ```*``` wildard if you dont know the exact name of the module.
 ```
-Get-PSModuleInfo -Module class*
-Get-PSModuleInfo -Module *class
-Get-PSModuleInfo -Module *class*
-Get-PSModuleInfo -Module *
+Find-GalleryModule -Module class*
+Find-GalleryModule -Module *class
+Find-GalleryModule -Module *class*
+Find-GalleryModule -Module *
 ```
-
-
-# Downloadcount switch
-The switch expand downloadcount and versiondownloadcount properties for each entities.
-Downloadcount will return the same value for every version of each entities. Instead VersionDownloadCount is more accurate, since its downloadcount per version.
 
 ## Example
 Retrieve all modules named psclassutils. In this example, it will return all the published versions of this particular module.
 ```
-Get-PSModuleInfo -Module psclassutils
+Find-GalleryModule -Module psclassutils
 ```
 
-Retrieve latestversion of psclassutils modules, and directly displays downloadcount and versiondownloadcount
+Retrieve latestversion of psclassutils modules
 Check last 2 properties:
 
 ```
-Get-PSModuleInfo -Module Psclassutils -Downloadcount
+Find-GalleryModule -Module Psclassutils -LatestVersion
 
 ...
 Title                    : Title
@@ -37,9 +32,9 @@ DownLoadCount            : 234
 VersionDownLoadCount     : 81
 ```
 
-Retrieve the infos for the latest published version of the psclassutils and adsips modules, and display only the id,version,authors,description and total versiondownloadcount
+Retrieve the infos for the latest published version of the psclassutils and adsips modules, and display only the id,version,authors,description
 ```
-Get-PSModuleInfo -Module 'psclassutils','adsips' -LatestVersion  -Downloadcount | select id,version,authors,description,versiondownloadcount
+Find-GalleryModule -Module 'psclassutils','adsips' -LatestVersion | select id,version,authors,description,versiondownloadcount
 
 Id                   : AdsiPS
 Version              : 1.0.0.3
@@ -56,11 +51,11 @@ VersionDownLoadCount : 85
 
 ## You can pass module names from the pipeline.
 ```
-'AdsiPS','PSClassutils' | Get-PSModuleInfo -LatestVersion
+'AdsiPS','PSClassutils' | Find-GalleryModule -LatestVersion
 ```
 or
 ```
-Get-Module | Get-PSModuleInfo -LatestVersion
+Get-Module | Find-GalleryModule -LatestVersion
 ```
 
 # More infos
