@@ -183,7 +183,7 @@ function Find-GalleryModule {
 
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Packages()?$fQ&`$orderby=Id"
-        $Uri
+        #$Uri
         #break;
         $skip = 0
         $BaseUri = $uri
@@ -202,7 +202,7 @@ function Find-GalleryModule {
                 [GalleryInfo]::new($_)
                 $y++
             })
-            $y
+            #$y
 
             ## Pagination
             If ( $y -eq 100 ) {
