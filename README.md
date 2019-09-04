@@ -67,17 +67,13 @@ VersionDownLoadCount : 85
 
 Retrieve the infos for the latest module created by the authors wich start with ```Damien``` 
 ```powershell
-Find-GalleryModule -Author Damien -LatestVersion | Select Authors,Id
+Find-GalleryModule -Author Jérôme -LatestVersion | Select Authors,Id
 
-Authors            Id
--------            --
-Damien Van Robaeys comparecomputer
-Damien Van Robaeys ConfigExport
-Damien Van Robaeys GetBIOS
-Damien Van Robaeys MDTMonitor
-Damien Van Robaeys PS1ToEXE
-Damien Van Robaeys PSTalk
-Damien Van Robaeys SetBIOS
+Authors             Id
+-------             --
+Jérôme Bezet-Torres ENILog
+Jérôme Bezet-Torres FreeNas
+Jérôme Bezet-Torres UpdatePwshModule
 ```
 
 Download the latest module created by the authors wich start with ```Damien``` 
