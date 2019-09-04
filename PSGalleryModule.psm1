@@ -89,15 +89,14 @@ Class GalleryInfo {
 
     }
 
-    [Object] Download () {
+    Download () {
         $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.nupkg'
         $OutFile = Join-Path -Path $PWD -ChildPath $PackageName
 
         Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
-        return $this
     }
 
-    [Object] Download ($Path) {
+    Download ($Path) {
         If ( ! ( Test-Path $Path) ) {
             Throw [System.IO.DirectoryNotFoundException]::new("Path Not Found: $Path")
         }
@@ -105,7 +104,6 @@ Class GalleryInfo {
         $OutFile = Join-Path -Path $Path -ChildPath $PackageName
 
         Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
-        return $this
     }
 }
 function Find-GalleryModule {
