@@ -89,20 +89,23 @@ Class GalleryInfo {
 
     }
 
-    Download () {
+    [Object] Download () {
         $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.nupkg'
         $OutFile = Join-Path -Path $PWD -ChildPath $PackageName
-        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile
+
+        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
+        return $this
     }
 
-    Download ($Path) {
+    [Object] Download ($Path) {
         If ( ! ( Test-Path $Path) ) {
             Throw [System.IO.DirectoryNotFoundException]::new("Path Not Found: $Path")
         }
         $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.nupkg'
         $OutFile = Join-Path -Path $Path -ChildPath $PackageName
 
-        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile
+        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
+        return $this
     }
 }
 function Find-GalleryModule {
@@ -143,7 +146,9 @@ function Find-GalleryModule {
         [String]$Author,
         [Parameter(ParameterSetName='Module')]
         [Parameter(ParameterSetName='Author')]
-        [Switch]$LatestVersion
+        [Switch]$LatestVersion,
+        [Switch]$Download,
+        [String]$OutPath
     )
     
     Begin {
@@ -217,7 +222,16 @@ function Find-GalleryModule {
             
             ## ApiCall
             ([Array](Invoke-RestMethod -Method GET -Uri $Uri)).foreach({
-                [GalleryInfo]::new($_)
+                If ( $Download ) {
+                    If ( $OutPath ) {
+                        [GalleryInfo]::new($_).Download($OutPath)
+                    } Else {
+                        [GalleryInfo]::new($_).Download()
+                    }
+                } Else {
+                    [GalleryInfo]::new($_)
+                }
+                
                 $y++
             })
 
