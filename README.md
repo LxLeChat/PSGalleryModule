@@ -3,30 +3,42 @@ Simple Function to retrieve Module(s) info(s) from the PSGallery. Its an attempt
 The idea at the begining was to be able to retrieve module download infos.
 
 # How it works
-The function builds an odata query for the psgallery api. It uses a basic class to expand all properties.
+The function builds an odata query for the psgallery api. It uses a basic class to expand all properties and give the possibility to download the package.
 
 # Install
 Fork the projet and clone it, or install from the psgallery directly : ```Install-Module PSGalleryModule``` 
 
+# Search Options
+You can search by Module Name, or by Authors.
+```powershell
+Find-GalleryModule -Module Pshtml* -LatestVersion
+Find-GalleryModule -Author Lxlechat -LatestVersion
+```
+You can not use the ```author``` and ```module``` parameter at the same time.
+
+# Download
+You can use the ```Download``` switch to download the package as a ```zip``` file.
+By default the package will be downloaded in the current directory. To change this behavior, use the ```outpath``` parameter.
+
 # Wildcards
 You can use the ```*``` wildard if you dont know the exact name of the module.
-```
+```powershell
 Find-GalleryModule -Module class*
 Find-GalleryModule -Module *class
 Find-GalleryModule -Module *class*
 Find-GalleryModule -Module *
 ```
 
-## Example
+## Examples
 Retrieve all modules named psclassutils. In this example, it will return all the published versions of this particular module.
-```
+```powershell
 Find-GalleryModule -Module psclassutils
 ```
 
 Retrieve latestversion of psclassutils modules
 Check last 2 properties:
 
-```
+```powershell
 Find-GalleryModule -Module Psclassutils -LatestVersion
 
 ...
@@ -37,7 +49,7 @@ VersionDownLoadCount     : 81
 ```
 
 Retrieve the infos for the latest published version of the psclassutils and adsips modules, and display only the id,version,authors,description
-```
+```powershell
 Find-GalleryModule -Module 'psclassutils','adsips' -LatestVersion | select id,version,authors,description,versiondownloadcount
 
 Id                   : AdsiPS
@@ -51,6 +63,39 @@ Version              : 2.6.3
 Authors              : Stéphane van Gulick
 Description          : Contains a set of utilities to work with Powershell Classes.
 VersionDownLoadCount : 85
+```
+
+Retrieve the infos for the latest module created by the authors wich start with ```Damien``` 
+```powershell
+Find-GalleryModule -Author Damien -LatestVersion | Select Authors,Id
+
+Authors            Id
+-------            --
+Damien Van Robaeys comparecomputer
+Damien Van Robaeys ConfigExport
+Damien Van Robaeys GetBIOS
+Damien Van Robaeys MDTMonitor
+Damien Van Robaeys PS1ToEXE
+Damien Van Robaeys PSTalk
+Damien Van Robaeys SetBIOS
+```
+
+Download the latest module created by the authors wich start with ```Damien``` 
+```powershell
+Find-GalleryModule -Author Damien -LatestVersion -OutPath c:\temp
+
+    Répertoire : C:\temp
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----       04/09/2019     17:12          15439 comparecomputer.1.0.0.zip
+-a----       04/09/2019     17:12           9278 ConfigExport.1.0.0.1.zip
+-a----       04/09/2019     17:12           5173 GetBIOS.1.2.0.zip
+-a----       04/09/2019     17:12         762749 MDTMonitor.1.0.0.zip
+-a----       04/09/2019     17:12           6412 PS1ToEXE.1.0.0.1.zip
+-a----       04/09/2019     17:12           6035 PSTalk.1.0.0.zip
+-a----       04/09/2019     17:12           7563 SetBIOS.1.0.0.zip
 ```
 
 ## You can pass module names from the pipeline.
