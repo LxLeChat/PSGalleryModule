@@ -3,6 +3,7 @@ Class GalleryInfo {
     $Id
     $Type
     $Version
+    $PackageDownloadURL
     $NormalizedVersion
     $Owners
     $Authors
@@ -44,6 +45,7 @@ Class GalleryInfo {
 
     GalleryInfo ($DataInput) {
         $this.raw = $DataInput
+        $this.PackageDownloadURL = $DataInput.properties.GalleryDetailsUrl -replace '/packages/','/api/v2/package/'
         $this.Title = $DataInput.Title.'#Text'
         $this.Id = $DataInput.Properties.id
         $this.Version = $DataInput.Properties.Version
@@ -202,7 +204,6 @@ function Find-GalleryModule {
                 [GalleryInfo]::new($_)
                 $y++
             })
-            #$y
 
             ## Pagination
             If ( $y -eq 100 ) {
