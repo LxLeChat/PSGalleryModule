@@ -142,7 +142,7 @@ function Find-GalleryModule {
 
             'Author' {
                 ## Build Query, api calls are made in the end block
-                $Q = "Authors eq '$Author'"
+                $Q = "startswith(Authors,'$Author')"
 
                 If ( $LatestVersion ) {
                     $Q = '(' + $Q + ' and IsLatestVersion)'
@@ -183,7 +183,7 @@ function Find-GalleryModule {
 
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Packages()?$fQ&`$orderby=Id"
-        #$Uri
+        $Uri
         #break;
         $skip = 0
         $BaseUri = $uri
