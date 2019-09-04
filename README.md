@@ -20,6 +20,11 @@ You can not use the ```author``` and ```module``` parameter at the same time.
 You can use the ```Download``` switch to download the package as a ```zip``` file.
 By default the package will be downloaded in the current directory. To change this behavior, use the ```outpath``` parameter.
 
+As the files are saved as zip files, you can directly pipe the result to ```Expand-Archive```.
+```powershell
+Find-GalleryModule -Module PSClassUtils -DownLoad | Expand-Archive
+```
+
 # Wildcards
 You can use the ```*``` wildard if you dont know the exact name of the module.
 ```powershell
