@@ -3,6 +3,7 @@ Class GalleryInfo {
     $Id
     $Type
     $Version
+    $PackageDownloadURL
     $NormalizedVersion
     $Owners
     $Authors
@@ -44,6 +45,7 @@ Class GalleryInfo {
 
     GalleryInfo ($DataInput) {
         $this.raw = $DataInput
+        $this.PackageDownloadURL = $DataInput.properties.GalleryDetailsUrl -replace '/packages/','/api/v2/package/'
         $this.Title = $DataInput.Title.'#Text'
         $this.Id = $DataInput.Properties.id
         $this.Version = $DataInput.Properties.Version
@@ -86,6 +88,25 @@ Class GalleryInfo {
         $this.ProjectUrl = If ( [bool]$DataInput.properties.ProjectUrl.null ) {$null}else{$DataInput.properties.ProjectUrl}
 
     }
+
+    [Object] Download () {
+        $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.zip'
+        $OutFile = Join-Path -Path $PWD -ChildPath $PackageName
+
+        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
+        return (Get-Item -Path $OutFile)
+    }
+
+    [Object] Download ($Path) {
+        If ( ! ( Test-Path $Path) ) {
+            Throw [System.IO.DirectoryNotFoundException]::new("Path Not Found: $Path")
+        }
+        $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.zip'
+        $OutFile = Join-Path -Path $Path -ChildPath $PackageName
+
+        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
+        return (Get-Item -Path $OutFile)
+    }
 }
 function Find-GalleryModule {
     <#
@@ -118,10 +139,16 @@ function Find-GalleryModule {
     #>
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory=$True,ValueFromPipelineByPropertyName=$True,ValueFromPipeline=$True)]
+        [Parameter(ValueFromPipelineByPropertyName=$True,ValueFromPipeline=$True,ParameterSetName='Module')]
         [Alias("Name")]
         [String[]]$Module,
-        [Switch]$LatestVersion
+        [Parameter(ParameterSetName='Author')]
+        [String]$Author,
+        [Parameter(ParameterSetName='Module')]
+        [Parameter(ParameterSetName='Author')]
+        [Switch]$LatestVersion,
+        [Switch]$Download,
+        [String]$OutPath
     )
     
     Begin {
@@ -133,29 +160,45 @@ function Find-GalleryModule {
     }
     
     Process {
+        
+        Switch ( $PSCmdlet.ParameterSetName ) {
 
-        ## Build Query, api calls are made in the end block
-        Foreach ( $M in $Module ) {
-            
-            If ( $i -gt 0 ) {
-                $Q = $Q + ' or '
+            'Author' {
+                ## Build Query, api calls are made in the end block
+                $Q = "startswith(Authors,'$Author')"
+
+                If ( $LatestVersion ) {
+                    $Q = '(' + $Q + ' and IsLatestVersion)'
+                }
             }
 
-            switch -Regex ($M) {
-            "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') ge 0";break}
-            "^\*.+"     {$tQ = "endswith(Id,'$($M.trimstart('*'))')";break}
-            ".+\*$"     {$tQ = "startswith(Id,'$($M.trimend('*'))')";break}
-            "^\*$"      {$tQ = "startswith(Id,'')";break}
-            default     {$tQ = "Id eq '$M'"}
-            }
+            'Module' {
+                ## Build Query, api calls are made in the end block
+                Foreach ( $M in $Module ) {
+                    
+                    If ( $i -gt 0 ) {
+                        $Q = $Q + ' or '
+                    }
 
-            If ( $LatestVersion ) {
-                $tQ = '(' + $tQ + ' and IsLatestVersion)'
-            }
+                    switch -Regex ($M) {
+                    "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') ge 0";break}
+                    "^\*.+"     {$tQ = "endswith(Id,'$($M.trimstart('*'))')";break}
+                    ".+\*$"     {$tQ = "startswith(Id,'$($M.trimend('*'))')";break}
+                    "^\*$"      {$tQ = "startswith(Id,'')";break}
+                    default     {$tQ = "Id eq '$M'"}
+                    }
 
-            $Q = $Q + $tQ
-            $i++
+                    If ( $LatestVersion ) {
+                        $tQ = '(' + $tQ + ' and IsLatestVersion)'
+                    }
+
+                    $Q = $Q + $tQ
+                    $i++
+                }
+            }
         }
+
+
 
     }
     
@@ -163,6 +206,8 @@ function Find-GalleryModule {
 
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Packages()?$fQ&`$orderby=Id"
+        #$Uri
+        #break;
         $skip = 0
         $BaseUri = $uri
         $y = 100
@@ -177,7 +222,16 @@ function Find-GalleryModule {
             
             ## ApiCall
             ([Array](Invoke-RestMethod -Method GET -Uri $Uri)).foreach({
-                [GalleryInfo]::new($_)
+                If ( $Download ) {
+                    If ( $OutPath ) {
+                        [GalleryInfo]::new($_).Download($OutPath)
+                    } Else {
+                        [GalleryInfo]::new($_).Download()
+                    }
+                } Else {
+                    [GalleryInfo]::new($_)
+                }
+                
                 $y++
             })
 
