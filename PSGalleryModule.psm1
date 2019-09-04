@@ -118,9 +118,13 @@ function Find-GalleryModule {
     #>
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory=$True,ValueFromPipelineByPropertyName=$True,ValueFromPipeline=$True)]
+        [Parameter(ValueFromPipelineByPropertyName=$True,ValueFromPipeline=$True,ParameterSetName='Module')]
         [Alias("Name")]
         [String[]]$Module,
+        [Parameter(ParameterSetName='Author')]
+        [String]$Author,
+        [Parameter(ParameterSetName='Module')]
+        [Parameter(ParameterSetName='Author')]
         [Switch]$LatestVersion
     )
     
@@ -133,29 +137,45 @@ function Find-GalleryModule {
     }
     
     Process {
+        
+        Switch ( $PSCmdlet.ParameterSetName ) {
 
-        ## Build Query, api calls are made in the end block
-        Foreach ( $M in $Module ) {
-            
-            If ( $i -gt 0 ) {
-                $Q = $Q + ' or '
+            'Author' {
+                ## Build Query, api calls are made in the end block
+                $Q = "Authors eq '$Author'"
+
+                If ( $LatestVersion ) {
+                    $Q = '(' + $Q + ' and IsLatestVersion)'
+                }
             }
 
-            switch -Regex ($M) {
-            "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') ge 0";break}
-            "^\*.+"     {$tQ = "endswith(Id,'$($M.trimstart('*'))')";break}
-            ".+\*$"     {$tQ = "startswith(Id,'$($M.trimend('*'))')";break}
-            "^\*$"      {$tQ = "startswith(Id,'')";break}
-            default     {$tQ = "Id eq '$M'"}
-            }
+            'Module' {
+                ## Build Query, api calls are made in the end block
+                Foreach ( $M in $Module ) {
+                    
+                    If ( $i -gt 0 ) {
+                        $Q = $Q + ' or '
+                    }
 
-            If ( $LatestVersion ) {
-                $tQ = '(' + $tQ + ' and IsLatestVersion)'
-            }
+                    switch -Regex ($M) {
+                    "^\*.+\*$"  {$tQ = "indexof(Id,'$($M.replace('*',''))') ge 0";break}
+                    "^\*.+"     {$tQ = "endswith(Id,'$($M.trimstart('*'))')";break}
+                    ".+\*$"     {$tQ = "startswith(Id,'$($M.trimend('*'))')";break}
+                    "^\*$"      {$tQ = "startswith(Id,'')";break}
+                    default     {$tQ = "Id eq '$M'"}
+                    }
 
-            $Q = $Q + $tQ
-            $i++
+                    If ( $LatestVersion ) {
+                        $tQ = '(' + $tQ + ' and IsLatestVersion)'
+                    }
+
+                    $Q = $Q + $tQ
+                    $i++
+                }
+            }
         }
+
+
 
     }
     
@@ -163,6 +183,8 @@ function Find-GalleryModule {
 
         $fQ = $bQ + $Q
         $Uri = "https://www.powershellgallery.com/api/v2/Packages()?$fQ&`$orderby=Id"
+        #$Uri
+        #break;
         $skip = 0
         $BaseUri = $uri
         $y = 100
@@ -180,6 +202,7 @@ function Find-GalleryModule {
                 [GalleryInfo]::new($_)
                 $y++
             })
+            $y
 
             ## Pagination
             If ( $y -eq 100 ) {
