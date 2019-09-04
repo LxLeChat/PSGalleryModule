@@ -101,7 +101,7 @@ Class GalleryInfo {
         If ( ! ( Test-Path $Path) ) {
             Throw [System.IO.DirectoryNotFoundException]::new("Path Not Found: $Path")
         }
-        $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.nupkg'
+        $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.zip'
         $OutFile = Join-Path -Path $Path -ChildPath $PackageName
 
         Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile -ErrorAction Stop
