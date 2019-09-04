@@ -88,6 +88,22 @@ Class GalleryInfo {
         $this.ProjectUrl = If ( [bool]$DataInput.properties.ProjectUrl.null ) {$null}else{$DataInput.properties.ProjectUrl}
 
     }
+
+    Download () {
+        $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.nupkg'
+        $OutFile = Join-Path -Path $PWD -ChildPath $PackageName
+        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile
+    }
+
+    Download ($Path) {
+        If ( ! ( Test-Path $Path) ) {
+            Throw [System.IO.DirectoryNotFoundException]::new("Path Not Found: $Path")
+        }
+        $PackageName = $this.ID + '.' + $this.NormalizedVersion + '.nupkg'
+        $OutFile = Join-Path -Path $Path -ChildPath $PackageName
+
+        Invoke-WebRequest -Uri $this.PackageDownloadURL -OutFile $OutFile
+    }
 }
 function Find-GalleryModule {
     <#
