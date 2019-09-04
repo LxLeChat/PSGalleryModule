@@ -65,7 +65,7 @@ Description          : Contains a set of utilities to work with Powershell Class
 VersionDownLoadCount : 85
 ```
 
-Retrieve the infos for the latest module created by the authors wich start with ```Damien``` 
+Retrieve the infos for the latest module created by the authors wich start with ```Jérôme``` 
 ```powershell
 Find-GalleryModule -Author Jérôme -LatestVersion | Select Authors,Id
 
