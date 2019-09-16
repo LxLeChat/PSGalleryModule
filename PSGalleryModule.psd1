@@ -4,7 +4,7 @@
     RootModule = 'PSGalleryModule.psm1'
     
     # Version number of this module.
-    ModuleVersion = '1.0.0'
+    ModuleVersion = '1.0.3'
     
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -99,7 +99,7 @@
             # IconUri = ''
     
             # ReleaseNotes of this module
-            ReleaseNotes = ''
+            ReleaseNotes = 'Added Date parameter. Specify a date to retrieve all modules published at this specific date;'
     
         } # End of PSData hashtable
     

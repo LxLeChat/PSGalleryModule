@@ -45,7 +45,7 @@ Class GalleryInfo {
 
     GalleryInfo ($DataInput) {
         $this.raw = $DataInput
-        $this.PackageDownloadURL = $DataInput.properties.GalleryDetailsUrl -replace '/packages/','/api/v2/package/'
+        $this.PackageDownloadURL = $DataInput.Content.Src
         $this.Title = $DataInput.Title.'#Text'
         $this.Id = $DataInput.Properties.id
         $this.Version = $DataInput.Properties.Version
@@ -113,7 +113,7 @@ function Find-GalleryModule {
     .SYNOPSIS
         Simple Function to retrieve Module(s) info(s) from the PSGallery
     .DESCRIPTION
-        Simple Function to retrieve Module(s) info(s) from the PSGallery
+        Simple Function to retrieve Module(s) info(s) from the PSGallery, and download the module as a zip file.
     .EXAMPLE
         PS C:\> Find-GalleryModule -Module PSClassutils -latestversion
         Will retrieve infos, about all the modules named psclassutils.
@@ -129,9 +129,33 @@ function Find-GalleryModule {
         ...
         DownloadCount            : 240
         VersionDownloadCount     : 1381
+    .EXAMPLE
+        PS C:\> Find-GalleryModule -Author Stéphane -latestversion
+        Will retrieve infos, about all the modules created by authors starting with "Stéphane".
+
+        Id                       : PSClassUtils
+        Version                  : 2.6.3
+        NormalizedVersion        : 2.6.3
+        Authors                  : Stéphane van Gulick
+        Copyright                : (c) 2018 TAAVAST3. All rights reserved.
+        Created                  : Created
+        Dependencies             :
+        Description              : Contains a set of utilities to work with Powershell Classes
+        ...
+    .EXAMPLE
+        PS C:\> Find-GalleryModule -Module PSClassutils -latestversion -Download
+        Search for module PSClassUtils and download the package as a zip file in the current directory.
+
+        Répertoire : C:\
+
+        Mode                LastWriteTime         Length Name
+        ----                -------------         ------ ----
+        -a----       04/09/2019     21:51        1854235 PSClassUtils.2.6.3.zip
     .INPUTS
         Module(s) Names, or partial Module name
         You can use the * wildcard if you dont know the exact name of the module
+
+        Author Name.
     .OUTPUTS
         Custom [GalleryInfo] Type, representing a Module Infos from the PSGallery
     .NOTES
@@ -147,6 +171,9 @@ function Find-GalleryModule {
         [Parameter(ParameterSetName='Module')]
         [Parameter(ParameterSetName='Author')]
         [Switch]$LatestVersion,
+        [Parameter(ParameterSetName='Date')]
+        [ValidateScript({get-date $_})]
+        [String]$Date,
         [Switch]$Download,
         [String]$OutPath
     )
@@ -195,6 +222,13 @@ function Find-GalleryModule {
                     $Q = $Q + $tQ
                     $i++
                 }
+            }
+
+            'Date' {
+                $StartDate = get-date -date $date -Hour 0 -Minute 0 -Second 0 -Format s
+                $date1 =  (get-date -Date $date).AddDays(1)
+                $EndDate = get-date -date $date1 -Hour 0 -Minute 0 -Second 0 -Format s
+                $Q = "startswith(Id,'') and Published gt DateTime'$StartDate' and Published lt DateTime'$EndDate'"
             }
         }
 
