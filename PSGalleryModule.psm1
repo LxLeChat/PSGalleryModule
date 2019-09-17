@@ -143,6 +143,15 @@ function Find-GalleryModule {
         Description              : Contains a set of utilities to work with Powershell Classes
         ...
     .EXAMPLE
+        PS C:\> Find-GalleryModule -Module PSClassutils -latestversion -Download
+        Search for module PSClassUtils and download the package as a zip file in the current directory.
+
+        Répertoire : C:\
+
+        Mode                LastWriteTime         Length Name
+        ----                -------------         ------ ----
+        -a----       04/09/2019     21:51        1854235 PSClassUtils.2.6.3.zip
+    .EXAMPLE
         PS C:\> Find-GalleryModule -Date 16/09/2019 -latestversion | select -Property Authors,Title,Version,Published
         will find all published module this day.
 
@@ -157,19 +166,23 @@ function Find-GalleryModule {
         David Stein                CMHealthcheck             1.0.10   16/09/2019 23:26:01
         ...
     .EXAMPLE
-        PS C:\> Find-GalleryModule -Module PSClassutils -latestversion -Download
-        Search for module PSClassUtils and download the package as a zip file in the current directory.
+        PS C:\> Find-GalleryModule -Module p* -LatestVersion -PSEditionType Desktop | select id,version
+        Find Modules with id starting with "p", latestversion and are compatible with Powershell Desktop.
 
-        Répertoire : C:\
-
-        Mode                LastWriteTime         Length Name
-        ----                -------------         ------ ----
-        -a----       04/09/2019     21:51        1854235 PSClassUtils.2.6.3.zip
+        Id                       Version
+        --                       -------
+        PackageManagement        1.4.4
+        PartnerCenter            2.0.1909.2
+        PartnerCenter.NetCore    1.5.1908.1
+        passwordstate-management 4.0.5
+        Pester                   4.9.0
     .INPUTS
         Module(s) Names, or partial Module name
         You can use the * wildcard if you dont know the exact name of the module
 
         Author Name.
+
+        Date, find all module published at a certain date.
     .OUTPUTS
         Custom [GalleryInfo] Type, representing a Module Infos from the PSGallery
     .NOTES
@@ -186,6 +199,8 @@ function Find-GalleryModule {
         [Parameter(ParameterSetName='Author')]
         [Parameter(ParameterSetName='Date')]
         [Switch]$LatestVersion,
+        [ValidateSet("Core","Desktop")]
+        [String]$PSEditionType,
         [Parameter(ParameterSetName='Date')]
         [ValidateScript({get-date $_})]
         [String]$Date,
@@ -210,7 +225,14 @@ function Find-GalleryModule {
                 $Q = "startswith(Authors,'$Author')"
 
                 If ( $LatestVersion ) {
-                    $Q = '(' + $Q + ' and IsLatestVersion)'
+                    $Q = $Q + ' and IsLatestVersion'
+                }
+
+                If ( $PSEditionType ) {
+                    Switch ( $PSEditionType ) {
+                        "Core"    { $Q = $Q + " and indexof(Tags,'PSEdition_Core') ge 0"}
+                        "Desktop" { $Q = $Q + " and indexof(Tags,'PSEdition_Desktop') ge 0"}
+                    }
                 }
             }
 
@@ -230,12 +252,21 @@ function Find-GalleryModule {
                     default     {$tQ = "Id eq '$M'"}
                     }
 
-                    If ( $LatestVersion ) {
-                        $tQ = '(' + $tQ + ' and IsLatestVersion)'
-                    }
-
                     $Q = $Q + $tQ
                     $i++
+                }
+
+                ## Will look for LatestVersion Only
+                If ( $LatestVersion ) {
+                    $Q = '(' + $Q + ') and IsLatestVersion'
+                }
+
+                ## Will look for specific Tags
+                If ( $PSEditionType ) {
+                    Switch ( $PSEditionType ) {
+                        "Core"    { $Q = $Q + " and indexof(Tags,'PSEdition_Core') ge 0"}
+                        "Desktop" { $Q = $Q + " and indexof(Tags,'PSEdition_Desktop') ge 0"}
+                    }
                 }
             }
 
@@ -243,12 +274,20 @@ function Find-GalleryModule {
                 $StartDate = get-date -date $date -Hour 0 -Minute 0 -Second 0 -Format s
                 $date1 =  (get-date -Date $date).AddDays(1)
                 $EndDate = get-date -date $date1 -Hour 0 -Minute 0 -Second 0 -Format s
-                $Q = "startswith(Id,'') and Published gt DateTime'$StartDate' and Published lt DateTime'$EndDate'"
-                     
-                     If ( $LatestVersion ) {
-                        $QT = $Q = '(' + $Q + ' and IsLatestVersion)'
-                        $Q = $QT
+                $Q = "Published gt DateTime'$StartDate' and Published lt DateTime'$EndDate'"
+                
+                ## Will look for LatestVersion Only
+                If ( $LatestVersion ) {
+                    $Q = $Q + ' and IsLatestVersion'
+                }
+
+                ## Will look for specific Tags
+                If ( $PSEditionType ) {
+                    Switch ( $PSEditionType ) {
+                        "Core"    { $Q = $Q + " and indexof(Tags,'PSEdition_Core') ge 0"}
+                        "Desktop" { $Q = $Q + " and indexof(Tags,'PSEdition_Desktop') ge 0"}
                     }
+                }
             }
         }
 
