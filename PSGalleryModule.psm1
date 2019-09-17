@@ -143,6 +143,20 @@ function Find-GalleryModule {
         Description              : Contains a set of utilities to work with Powershell Classes
         ...
     .EXAMPLE
+        PS C:\> Find-GalleryModule -Date 16/09/2019 -latestversion | select -Property Authors,Title,Version,Published
+        will find all published module this day.
+
+        Authors                     Title                     Version  Published          
+        -------                     -----                     -------  ---------          
+        Przemyslaw Klys            ADEssentials              0.0.18   16/09/2019 21:12:10
+        a.krick@outlook.com        AKPT                      5.11.4.0 16/09/2019 07:42:50
+        R. Josh Nylander           AMAG-SMSPowershell        1.1.4    16/09/2019 00:38:25
+        Esri                       ArcGIS                    2.1.1    16/09/2019 18:45:28
+        AzSK Team                  AzSK                      4.1.0    16/09/2019 14:07:54
+        AzSK Team                  AzSKPreview               4.1.2    16/09/2019 11:29:40
+        David Stein                CMHealthcheck             1.0.10   16/09/2019 23:26:01
+        ...
+    .EXAMPLE
         PS C:\> Find-GalleryModule -Module PSClassutils -latestversion -Download
         Search for module PSClassUtils and download the package as a zip file in the current directory.
 
@@ -170,6 +184,7 @@ function Find-GalleryModule {
         [String]$Author,
         [Parameter(ParameterSetName='Module')]
         [Parameter(ParameterSetName='Author')]
+        [Parameter(ParameterSetName='Date')]
         [Switch]$LatestVersion,
         [Parameter(ParameterSetName='Date')]
         [ValidateScript({get-date $_})]
@@ -229,6 +244,11 @@ function Find-GalleryModule {
                 $date1 =  (get-date -Date $date).AddDays(1)
                 $EndDate = get-date -date $date1 -Hour 0 -Minute 0 -Second 0 -Format s
                 $Q = "startswith(Id,'') and Published gt DateTime'$StartDate' and Published lt DateTime'$EndDate'"
+                     
+                     If ( $LatestVersion ) {
+                        $QT = $Q = '(' + $Q + ' and IsLatestVersion)'
+                        $Q = $QT
+                    }
             }
         }
 
