@@ -9,12 +9,13 @@ The function builds an odata query for the psgallery api. It uses a basic class 
 Fork the projet and clone it, or install from the psgallery directly : ```Install-Module PSGalleryModule``` 
 
 # Search Options
-You can search by Module Name, or by Authors.
+You can search by Module Name, by Authors, or by Date.
 ```powershell
 Find-GalleryModule -Module Pshtml* -LatestVersion
 Find-GalleryModule -Author Lxlechat -LatestVersion
+Find-GalleryModule -Date 17/09/2019 -LatestVersion
 ```
-You can not use the ```author``` and ```module``` parameter at the same time.
+You can not use the ```author```, ```module``` or ```date``` parameter at the same time.
 
 # Download
 You can use the ```Download``` switch to download the package as a ```zip``` file.
