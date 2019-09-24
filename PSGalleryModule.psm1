@@ -195,10 +195,8 @@ function Find-GalleryModule {
         [String[]]$Module,
         [Parameter(ParameterSetName='Author')]
         [String]$Author,
-        [Parameter(ParameterSetName='Module')]
-        [Parameter(ParameterSetName='Author')]
-        [Parameter(ParameterSetName='Date')]
-        [Switch]$LatestVersion,
+        [ValidateSet("LatestVersion","PreRelease")]
+        [String]$Version,
         [ValidateSet("Core","Desktop")]
         [String]$PSEditionType,
         [Parameter(ParameterSetName='Date')]
@@ -224,8 +222,15 @@ function Find-GalleryModule {
                 ## Build Query, api calls are made in the end block
                 $Q = "startswith(Authors,'$Author')"
 
-                If ( $LatestVersion ) {
-                    $Q = $Q + ' and IsLatestVersion'
+                Switch ($Version) {
+                    ## Will look for LatestVersion Only
+                    'LatestVersion' {
+                        $Q = '(' + $Q + ') and IsLatestVersion'
+                    }
+                    ## Will look for Latest PreRelease version Only
+                    'PreRelease'    {
+                        $Q = '(' + $Q + ') and IsPrerelease and IsAbsoluteLatestVersion'
+                    }
                 }
 
                 If ( $PSEditionType ) {
@@ -256,9 +261,15 @@ function Find-GalleryModule {
                     $i++
                 }
 
-                ## Will look for LatestVersion Only
-                If ( $LatestVersion ) {
-                    $Q = '(' + $Q + ') and IsLatestVersion'
+                Switch ($Version) {
+                    ## Will look for LatestVersion Only
+                    'LatestVersion' {
+                        $Q = '(' + $Q + ') and IsLatestVersion'
+                    }
+                    ## Will look for Latest PreRelease version Only
+                    'PreRelease'    {
+                        $Q = '(' + $Q + ') and IsPrerelease and IsAbsoluteLatestVersion'
+                    }
                 }
 
                 ## Will look for specific Tags
@@ -276,9 +287,15 @@ function Find-GalleryModule {
                 $EndDate = get-date -date $date1 -Hour 0 -Minute 0 -Second 0 -Format s
                 $Q = "Published gt DateTime'$StartDate' and Published lt DateTime'$EndDate'"
                 
-                ## Will look for LatestVersion Only
-                If ( $LatestVersion ) {
-                    $Q = $Q + ' and IsLatestVersion'
+                Switch ($Version) {
+                    ## Will look for LatestVersion Only
+                    'LatestVersion' {
+                        $Q = '(' + $Q + ') and IsLatestVersion'
+                    }
+                    ## Will look for Latest PreRelease version Only
+                    'PreRelease'    {
+                        $Q = '(' + $Q + ') and IsPrerelease and IsAbsoluteLatestVersion'
+                    }
                 }
 
                 ## Will look for specific Tags
