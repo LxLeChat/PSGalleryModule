@@ -11,9 +11,10 @@ Fork the projet and clone it, or install from the psgallery directly : ```Instal
 # Search Options
 You can search by Module Name, by Authors, or by Date.
 ```powershell
-Find-GalleryModule -Module Pshtml* -LatestVersion
-Find-GalleryModule -Author Lxlechat -LatestVersion
-Find-GalleryModule -Date 17/09/2019 -LatestVersion
+Find-GalleryModule -Module Pshtml* -Version LatestVersion
+Find-GalleryModule -Author Lxlechat -Version LatestVersion
+Find-GalleryModule -Date 17/09/2019 -Version LatestVersion
+Find-GalleryModule -Module Pshtml -Version PreRelease
 ```
 You can not use the ```author```, ```module``` or ```date``` parameter at the same time.
 
@@ -45,7 +46,7 @@ Retrieve latestversion of psclassutils modules
 Check last 2 properties:
 
 ```powershell
-Find-GalleryModule -Module Psclassutils -LatestVersion
+Find-GalleryModule -Module Psclassutils -Version LatestVersion
 
 ...
 Title                    : Title
@@ -56,7 +57,7 @@ VersionDownLoadCount     : 81
 
 Retrieve the infos for the latest published version of the psclassutils and adsips modules, and display only the id,version,authors,description
 ```powershell
-Find-GalleryModule -Module 'psclassutils','adsips' -LatestVersion | select id,version,authors,description,versiondownloadcount
+Find-GalleryModule -Module 'psclassutils','adsips' -Version LatestVersion | select id,version,authors,description,versiondownloadcount
 
 Id                   : AdsiPS
 Version              : 1.0.0.3
@@ -73,7 +74,7 @@ VersionDownLoadCount : 85
 
 Retrieve the infos for the latest module created by the authors wich start with ```Jérôme``` 
 ```powershell
-Find-GalleryModule -Author Jérôme -LatestVersion | Select Authors,Id
+Find-GalleryModule -Author Jérôme -Version LatestVersion | Select Authors,Id
 
 Authors             Id
 -------             --
@@ -84,7 +85,7 @@ Jérôme Bezet-Torres UpdatePwshModule
 
 Download the latest module created by the authors wich start with ```Damien``` 
 ```powershell
-Find-GalleryModule -Author Damien -LatestVersion -OutPath c:\temp
+Find-GalleryModule -Author Damien -Version LatestVersion -OutPath c:\temp
 
     Répertoire : C:\temp
 
@@ -102,15 +103,14 @@ Mode                LastWriteTime         Length Name
 
 ## You can pass module names from the pipeline.
 ```
-'AdsiPS','PSClassutils' | Find-GalleryModule -LatestVersion
+'AdsiPS','PSClassutils' | Find-GalleryModule -Version LatestVersion
 ```
 or
 ```
-Get-Module | Find-GalleryModule -LatestVersion
+Get-Module | Find-GalleryModule -Version LatestVersion
 ```
 
 # More infos
 -https://github.com/NuGet/Home/wiki/Filter-OData-query-requests
 
 -https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-odata/72d4ebf9-5480-49a4-b88b-c5782f726c87
-
