@@ -155,8 +155,8 @@ function Find-GalleryModule {
         PS C:\> Find-GalleryModule -Date 16/09/2019 -latestversion | select -Property Authors,Title,Version,Published
         will find all published module this day.
 
-        Authors                     Title                     Version  Published          
-        -------                     -----                     -------  ---------          
+        Authors                     Title                     Version  Published
+        -------                     -----                     -------  ---------
         Przemyslaw Klys            ADEssentials              0.0.18   16/09/2019 21:12:10
         a.krick@outlook.com        AKPT                      5.11.4.0 16/09/2019 07:42:50
         R. Josh Nylander           AMAG-SMSPowershell        1.1.4    16/09/2019 00:38:25
@@ -205,17 +205,17 @@ function Find-GalleryModule {
         [Switch]$Download,
         [String]$OutPath
     )
-    
+
     Begin {
 
         $bQ = '$filter='
         $Q = ''
         $i = 0
-        
+
     }
-    
+
     Process {
-        
+
         Switch ( $PSCmdlet.ParameterSetName ) {
 
             'Author' {
@@ -244,7 +244,7 @@ function Find-GalleryModule {
             'Module' {
                 ## Build Query, api calls are made in the end block
                 Foreach ( $M in $Module ) {
-                    
+
                     If ( $i -gt 0 ) {
                         $Q = $Q + ' or '
                     }
@@ -286,7 +286,7 @@ function Find-GalleryModule {
                 $date1 =  (get-date -Date $date).AddDays(1)
                 $EndDate = get-date -date $date1 -Hour 0 -Minute 0 -Second 0 -Format s
                 $Q = "Published gt DateTime'$StartDate' and Published lt DateTime'$EndDate'"
-                
+
                 Switch ($Version) {
                     ## Will look for LatestVersion Only
                     'LatestVersion' {
@@ -311,7 +311,7 @@ function Find-GalleryModule {
 
 
     }
-    
+
     End {
 
         $fQ = $bQ + $Q
@@ -325,11 +325,11 @@ function Find-GalleryModule {
         While ( $y -eq 100 ) {
 
             $y = 0
-            ## Build new page 
+            ## Build new page
             If ( $skip -gt 0 ) {
                 $uri = $BaseUri + "&`$skip=$skip"
             }
-            
+
             ## ApiCall
             ([Array](Invoke-RestMethod -Method GET -Uri $Uri)).foreach({
                 If ( $Download ) {
@@ -341,7 +341,7 @@ function Find-GalleryModule {
                 } Else {
                     [GalleryInfo]::new($_)
                 }
-                
+
                 $y++
             })
 
@@ -350,6 +350,6 @@ function Find-GalleryModule {
                 $skip = $skip + $y
             }
         }
-        
+
     }
 }
